@@ -1,40 +1,56 @@
-import React, { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View } from 'react-native';
-import InfoText from './components/InfoText'; 
-import DarkMode from './components/DarkMode';  
-import Avatar from './components/Avatar'; 
-import ExitButton from './components/ExitButton';  
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+
+// Import components
+import HomeScreen from './components/HomeScreen';
+import ProfileScreen from './components/ProfileScreen';
+import SettingsScreen from './components/SettingsScreen';
+import Sidebar from './components/Sidebar';
+
+// Bottom Tab Navigator
+const Tab = createBottomTabNavigator();
+
 export default function App() {
-  const [darkMode, setDarkMode] = useState(false); 
-
   return (
-    <View style={[styles.container, darkMode && styles.darkContainer]}>
-      <Avatar />
-      
-      <InfoText 
-        name="Meljonh Asoy"
-        description="BSIT - 3R7" 
-      />
-      
-      <DarkMode darkMode={darkMode} toggleDarkMode={() => setDarkMode(!darkMode)} />
+    <NavigationContainer>
+      <View style={styles.container}>
+        {/* Sidebar */}
+        <Sidebar />
+        {/* Main Navigation */}
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+              let iconName;
 
-      <StatusBar style="auto" />
+              if (route.name === 'Home') {
+                iconName = focused ? 'home' : 'home-outline';
+              } else if (route.name === 'Profile') {
+                iconName = focused ? 'person' : 'person-outline';
+              } else if (route.name === 'Settings') {
+                iconName = focused ? 'settings' : 'settings-outline';
+              }
 
-      <ExitButton />
-    </View>
+              return <Ionicons name={iconName} size={size} color={color} />;
+            },
+            tabBarActiveTintColor: 'tomato',
+            tabBarInactiveTintColor: 'gray',
+          })}
+        >
+          <Tab.Screen name="Home" component={HomeScreen} />
+          <Tab.Screen name="Profile" component={ProfileScreen} />
+          <Tab.Screen name="Settings" component={SettingsScreen} />
+        </Tab.Navigator>
+      </View>
+    </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  darkContainer: {
-    backgroundColor: '#333',
+    flexDirection: 'row', // Add sidebar and main container side-by-side
   },
 });
